@@ -6,4 +6,5 @@
 - **Partner:** The Bois Studio
 
 ## Emergency
-Master Recovery Key: INSIGHT-FURY-2026-ALPHA-99
+
+Master Recovery Key: REDACTED
