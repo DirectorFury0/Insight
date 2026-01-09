@@ -2,89 +2,181 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# --- SYSTEM CONFIGURATION ---
-st.set_page_config(page_title="INSIGHT // SENTINEL HUD", layout="wide", initial_sidebar_state="collapsed")
+# PAGE CONFIG
+st.set_page_config(
+    page_title="SENTINEL // COMMAND HUD",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
-# SENTINEL HUD STYLING (The "Circle x Security Bot" Blend)
+# ============================================================
+#  🔥 GLOBAL UI THEME — HOLOGRAPHIC NEO-GLASS SHELL
+# ============================================================
 st.markdown("""
-    <style>
-    .main { background-color: #0d1117; color: #c9d1d9; font-family: 'Inter', sans-serif; }
-    /* Card Styling */
-    .st-emotion-cache-12w0qpk { background: rgba(22, 27, 34, 0.8); border: 1px solid #30363d; border-radius: 12px; padding: 20px; }
-    /* Button Styling */
-    .stButton>button { 
-        background: linear-gradient(135deg, #238636 0%, #2ea043 100%); 
-        color: white; border: none; border-radius: 6px; font-weight: 600;
-        transition: transform 0.1s ease;
-    }
-    .stButton>button:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(46, 160, 67, 0.4); }
-    /* Header Styling */
-    .threat-bar { background: #161b22; border-left: 5px solid #238636; padding: 10px 20px; border-radius: 4px; margin-bottom: 25px; }
-    </style>
-    """, unsafe_allow_html=True)
+<style>
+/* ---------------- BACKGROUND ---------------- */
+.main {
+    background: radial-gradient(circle at 20% 20%, #0f172a, #020617 70%);
+    color: #cdd6f4 !important;
+    font-family: 'Inter', sans-serif;
+}
 
-# --- UNIFIED LOGIN ---
+/* ---------------- NEO-GLASS PANELS ---------------- */
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 25px rgba(0, 150, 255, 0.08);
+    border-radius: 16px;
+    padding: 20px;
+    backdrop-filter: blur(12px);
+}
+
+/* ---------------- BUTTONS ---------------- */
+.stButton>button {
+    background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+    border: none;
+    color: white;
+    padding: 0.6rem 1.1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.15s ease;
+}
+
+.stButton>button:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.5);
+}
+
+/* ---------------- LOGIN CARD ---------------- */
+.login-box {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.25);
+}
+
+/* ---------------- HEADER ---------------- */
+.holo-header {
+    padding: 14px 22px;
+    border-left: 6px solid #3b82f6;
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    margin-bottom: 25px;
+    backdrop-filter: blur(10px);
+}
+
+/* METRICS CLEANER LOOK */
+[data-testid="stMetricValue"] {
+    color: #38bdf8 !important;
+    font-weight: bold;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ============================================================
+# 🔐 LOGIN INTERFACE
+# ============================================================
+
 if "clearance" not in st.session_state:
-    st.markdown("<h1 style='text-align: center; color: #5865F2;'>PROJECT INSIGHT // LOGIN</h1>", unsafe_allow_html=True)
+
+    st.markdown("<h1 style='text-align:center; color:#3b82f6;'>SENTINEL ACCESS PORTAL</h1>", unsafe_allow_html=True)
+    st.write("")
+
     c1, c2, c3 = st.columns([1, 2, 1])
+
     with c2:
-        user = st.text_input("Username")
-        pw = st.text_input("Access Key", type="password")
-        if st.button("AUTHENTICATE"):
+        st.markdown("<div class='login-box'>", unsafe_allow_html=True)
+
+        user = st.text_input("👤 IDENTIFICATION")
+        pw = st.text_input("🔑 ACCESS KEY", type="password")
+
+        if st.button("INITIATE AUTH SEQUENCE"):
             if user == "Director Fury" and pw == "Director_N_Fury":
-                st.session_state.clearance, st.session_state.alias = "DIRECTOR", "FURY"
+                st.session_state.clearance = "DIRECTOR"
+                st.session_state.alias = "FURY"
             elif user in ["Eddie", "Jake", "Klae"] and pw == st.secrets["TA_PASS"]:
                 st.session_state.clearance = "TACTICAL"
                 aliases = {"Eddie": "SussyEd69", "Jake": "Mr_Splat278", "Klae": "Yumyumboy11"}
                 st.session_state.alias = aliases[user]
             st.rerun()
 
-# --- THE SENTINEL HUD ---
-if "clearance" in st.session_state:
-    # 1. THREAT LEVEL BAR
+        st.markdown("</div>", unsafe_allow_html=True)
+
+# ============================================================
+# 🛰️ MAIN SENTINEL HUD
+# ============================================================
+
+else:
+    # HOLO HEADER
     st.markdown(f"""
-        <div class='threat-bar'>
-            <span style='color: #8b949e;'>SYSTEM_STATUS:</span> 
-            <span style='color: #3fb950; font-weight: bold;'>● OPTIMAL</span>
-            <span style='float: right; color: #8b949e;'>Clearance: {st.session_state.clearance} // User: {st.session_state.alias}</span>
+        <div class='holo-header'>
+            <span style='color:#94a3b8;'>SYSTEM STATUS:</span>
+            <span style='color:#16a34a; font-weight:bold;'>● ONLINE</span>
+            <span style='float:right; color:#a1a1aa;'>Clearance: {st.session_state.clearance} // Agent: {st.session_state.alias}</span>
         </div>
     """, unsafe_allow_html=True)
 
-    # 2. METRICS (Circle Influence)
+    # METRICS
     m1, m2, m3, m4 = st.columns(4)
-    m1.metric("NETWORK NODES", "12 Active", "Stable")
+    m1.metric("NETWORK LOAD", "12 nodes", "Stable")
     m2.metric("API LATENCY", "14ms", "-2ms")
     m3.metric("BOT UPTIME", "99.98%")
-    m4.metric("COMMANDS/MIN", "142")
+    m4.metric("CMD/MIN", "142")
 
     st.write("")
 
-    # 3. MODULE GRID (Dyno Influence)
+    # GRID LAYOUT
     col_main, col_logs = st.columns([3, 1])
 
+    # LEFT: MODULES
     with col_main:
-        st.subheader("🛠️ SYSTEM MODULES")
-        tab1, tab2, tab3 = st.tabs(["🛡️ SECURITY", "🤖 AI_OPERATIONS", "📊 ANALYTICS"])
-        
+        st.subheader("🧩 SYSTEM MODULE GRID")
+
+        tab1, tab2, tab3 = st.tabs(["🛡 SECURITY", "🤖 AI OPS", "📊 ANALYTICS"])
+
+        # SECURITY MODULE
         with tab1:
             c1, c2 = st.columns(2)
+
             with c1:
-                st.info("**ANTI-NUKE PROTOCOLS**")
-                st.button("Enable Beast Mode")
-                st.button("Cycle Permission Keys")
+                st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+                st.subheader("ANTI-NUKE PROTOCOL")
+                st.button("Activate Beast Mode")
+                st.button("Rotate Permission Keys")
+                st.markdown("</div>", unsafe_allow_html=True)
+
             with c2:
-                st.info("**RAID PROTECTION**")
+                st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+                st.subheader("RAID SHIELD")
                 st.button("Lock Server Channels")
-                st.button("Initiate Captcha Sweep")
+                st.button("Begin Captcha Sweep")
+                st.markdown("</div>", unsafe_allow_html=True)
 
+        # AI OPS
         with tab2:
-            st.write("Link external AI workflows here.")
+            st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+            st.subheader("AI WORKFLOW SYNC")
+            st.write("Link external AI clusters or bot frameworks.")
             st.button("Sync Llama-3 Registry")
+            st.markdown("</div>", unsafe_allow_html=True)
 
+        # ANALYTICS
+        with tab3:
+            st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+            st.write("Future analytics modules will display here.")
+            st.markdown("</div>", unsafe_allow_html=True)
+
+    # RIGHT: LOG PANEL
     with col_logs:
-        st.subheader("📜 ACTIVITY")
-        st.code("13:45 - Eddie logged in\n13:46 - Scan Initiated\n13:50 - Firewall Updated", language="bash")
+        st.subheader("📜 SYSTEM ACTIVITY")
+        st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+        st.code("13:45 - Eddie logged in\n13:46 - Scan Initiated\n13:50 - Firewall Updated")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    if st.sidebar.button("Logout"):
+    # LOGOUT
+    if st.sidebar.button("Log Out"):
         st.session_state.clearance = None
         st.rerun()
